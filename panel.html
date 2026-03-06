@@ -438,6 +438,11 @@ function abrirModal(id){document.getElementById(id).classList.add('open')}
 function cerrarModales(){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'))}
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)cerrarModales()}))
 
+function guardarConfig(){localStorage.setItem("server_url",document.getElementById("server-url").value);localStorage.setItem("negocio_id",document.getElementById("negocio-id").value)}
+function restaurarConfig(){var url=localStorage.getItem("server_url");var id=localStorage.getItem("negocio_id");if(url)document.getElementById("server-url").value=url;if(id)document.getElementById("negocio-id").value=id;if(url||id)cargarTodo()}
+document.getElementById("server-url").addEventListener("change",guardarConfig)
+document.getElementById("negocio-id").addEventListener("change",guardarConfig)
+restaurarConfig()
 function toast(msg,error=false){
   const el=document.getElementById('toast')
   el.textContent=msg;el.className='toast show'+(error?' error':'')
