@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu Empleado IA — Acceso</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#07070f;--surface:#0f0f1a;--surface2:#181828;--border:#252538;
+    --accent:#7c6dfa;--accent2:#fa6d9a;--green:#3dffa0;--text:#e2e2f0;--muted:#5a5a78;
+    --font:"Syne",sans-serif;--mono:"DM Mono",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(124,109,250,0.1),transparent);}
+  .grid{position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(124,109,250,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,109,250,0.03) 1px,transparent 1px);background-size:48px 48px;}
+  .box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:420px;max-width:95vw;position:relative;z-index:1;}
+  .logo{text-align:center;margin-bottom:32px;}
+  .logo-text{font-size:22px;font-weight:800;}
+  .logo-text span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .logo-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:1.5px;}
+  .tabs{display:flex;background:var(--surface2);border-radius:10px;padding:4px;margin-bottom:28px;}
+  .tab{flex:1;padding:8px;text-align:center;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all 0.15s;}
+  .tab.active{background:var(--accent);color:#fff;}
+  .form{display:none;}
+  .form.active{display:block;}
+  .form-group{margin-bottom:16px;}
+  .form-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.5px;display:block;margin-bottom:6px;}
+  .form-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:var(--font);font-size:13px;outline:none;transition:border 0.15s;}
+  .form-input:focus{border-color:var(--accent);}
+  .form-input::placeholder{color:var(--muted);}
+  .btn{width:100%;background:var(--accent);color:#fff;border:none;padding:12px;border-radius:8px;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;margin-top:4px;}
+  .btn:hover{background:#6a5ce8;transform:translateY(-1px);box-shadow:0 4px 20px rgba(124,109,250,0.3);}
+  .error{background:rgba(250,109,154,0.1);border:1px solid rgba(250,109,154,0.3);color:#fa6d9a;padding:10px 14px;border-radius:8px;font-size:12px;font-family:var(--mono);margin-bottom:16px;display:none;}
+  .loading{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .divider{text-align:center;margin:20px 0;color:var(--muted);font-size:11px;font-family:var(--mono);position:relative;}
+  .divider::before,.divider::after{content:"";position:absolute;top:50%;width:42%;height:1px;background:var(--border);}
+  .divider::before{left:0;} .divider::after{right:0;}
+</style>
+</head>
+<body>
+<div class="grid"></div>
+<div class="box">
+  <div class="logo">
+    <div class="logo-text">Tu <span>Empleado IA</span></div>
+    <div class="logo-sub">PLATAFORMA SAAS · ACCESO</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('login')">Ingresar</div>
+    <div class="tab" onclick="switchTab('registro')">Registrarse</div>
+  </div>
+
+  <div id="error-msg" class="error"></div>
+
+  <!-- LOGIN -->
+  <div class="form active" id="form-login">
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="login-email" type="email" placeholder="tu@negocio.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input class="form-input" id="login-password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn" id="btn-login" onclick="doLogin()">Ingresar al panel</button>
+  </div>
+
+  <!-- REGISTRO -->
+  <div class="form" id="form-registro">
+    <div class="form-group">
+      <label class="form-label">Nombre del negocio</label>
+      <input class="form-input" id="reg-nombre" placeholder="Ej: Ferretería El Tornillo">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo de negocio</label>
+      <select class="form-input" id="reg-tipo">
+        <option value="ferreteria">Ferretería / Herramientas</option>
+        <option value="gimnasio">Gimnasio</option>
+        <option value="peluqueria">Peluquería</option>
+        <option value="restaurante">Restaurante</option>
+        <option value="tienda">Tienda / E-commerce</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="reg-email" type="email" placeholder="tu@negocio.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input class="form-input" id="reg-password" type="password" placeholder="Mínimo 6 caracteres">
+    </div>
+    <button class="btn" id="btn-registro" onclick="doRegistro()">Crear cuenta gratis</button>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin
+
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"))
+  document.querySelectorAll(".form").forEach(f => f.classList.remove("active"))
+  event.currentTarget.classList.add("active")
+  document.getElementById("form-" + tab).classList.add("active")
+  document.getElementById("error-msg").style.display = "none"
+}
+
+function showError(msg) {
+  const el = document.getElementById("error-msg")
+  el.textContent = msg
+  el.style.display = "block"
+}
+
+async function doLogin() {
+  const email = document.getElementById("login-email").value
+  const password = document.getElementById("login-password").value
+  if (!email || !password) return showError("Completá todos los campos")
+  const btn = document.getElementById("btn-login")
+  btn.innerHTML = "<span class=\"loading\"></span>Ingresando..."
+  btn.disabled = true
+  try {
+    const res = await fetch(API + "/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    })
+    const data = await res.json()
+    if (!data.ok) { showError(data.error); btn.innerHTML = "Ingresar al panel"; btn.disabled = false; return }
+    localStorage.setItem("token", data.token)
+    localStorage.setItem("negocio_id", data.negocio.id)
+    localStorage.setItem("server_url", API)
+    window.location.href = "/panel"
+  } catch(e) { showError("Error de conexión"); btn.innerHTML = "Ingresar al panel"; btn.disabled = false }
+}
+
+async function doRegistro() {
+  const nombre = document.getElementById("reg-nombre").value
+  const tipo = document.getElementById("reg-tipo").value
+  const email = document.getElementById("reg-email").value
+  const password = document.getElementById("reg-password").value
+  if (!nombre || !email || !password) return showError("Completá todos los campos")
+  if (password.length < 6) return showError("La contraseña debe tener al menos 6 caracteres")
+  const btn = document.getElementById("btn-registro")
+  btn.innerHTML = "<span class=\"loading\"></span>Creando cuenta..."
+  btn.disabled = true
+  try {
+    const res = await fetch(API + "/api/auth/registro", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, nombre_negocio: nombre, tipo_negocio: tipo })
+    })
+    const data = await res.json()
+    if (!data.ok) { showError(data.error); btn.innerHTML = "Crear cuenta gratis"; btn.disabled = false; return }
+    localStorage.setItem("token", data.token || "")
+    localStorage.setItem("negocio_id", data.negocio.id)
+    localStorage.setItem("server_url", API)
+    showError("Cuenta creada! Ingresá con tu email y contraseña.")
+    document.getElementById("error-msg").style.borderColor = "var(--green)"
+    document.getElementById("error-msg").style.color = "var(--green)"
+    document.getElementById("error-msg").style.background = "rgba(61,255,160,0.1)"
+    switchTab("login")
+    btn.innerHTML = "Crear cuenta gratis"; btn.disabled = false
+  } catch(e) { showError("Error de conexión"); btn.innerHTML = "Crear cuenta gratis"; btn.disabled = false }
+}
+</script>
+</body>
+</html>
