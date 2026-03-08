@@ -161,6 +161,7 @@
         <input class="config-input" id="server-url" placeholder="https://tu-empleado-ia.onrender.com" value="http://localhost:3000">
         <input class="config-input" id="negocio-id" placeholder="UUID del negocio..." style="width:190px">
         <button class="btn btn-ghost" onclick="cargarTodo()">↻ Cargar</button>
+        <button class="btn btn-ghost" onclick="logout()" style="border-color:#fa6d9a;color:#fa6d9a">Salir</button>
       </div>
     </div>
 
@@ -443,6 +444,13 @@ function restaurarConfig(){var url=localStorage.getItem("server_url");var id=loc
 document.getElementById("server-url").addEventListener("change",guardarConfig)
 document.getElementById("negocio-id").addEventListener("change",guardarConfig)
 restaurarConfig()
+function logout(){
+  localStorage.removeItem("token")
+  localStorage.removeItem("negocio_id")
+  localStorage.removeItem("server_url")
+  window.location.href = "/login"
+}
+
 function toast(msg,error=false){
   const el=document.getElementById('toast')
   el.textContent=msg;el.className='toast show'+(error?' error':'')
