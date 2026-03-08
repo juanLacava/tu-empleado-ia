@@ -139,6 +139,7 @@
     <div class="logo">
       <div class="logo-mark">Tu <span>Empleado IA</span></div>
       <div class="logo-sub">Panel de Control</div>
+      <div id="negocio-nombre" style="font-size:16px;color:#ffffff;margin-top:10px;font-weight:800;line-height:1.2;word-break:break-word;letter-spacing:-0.3px"></div>
     </div>
     <nav class="nav">
       <div class="nav-section">Principal</div>
@@ -477,6 +478,8 @@ function toast(msg,error=false){
       if (data.negocio) {
         document.getElementById("negocio-id").value = data.negocio.id
         localStorage.setItem("negocio_id", data.negocio.id)
+        document.getElementById("negocio-nombre").textContent = data.negocio.nombre
+        cargarTodo()
       }
     }
   }).catch(() => {
