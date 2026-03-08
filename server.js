@@ -187,8 +187,13 @@ app.get("/panel", (req, res) => {
 })
 
 app.get("/", (req, res) => {
-  res.json({ ok: true, mensaje: "Servidor Tu Empleado IA corriendo ✅", modelo: "llama-3.3-70b-versatile", version: "1.0.0" })
+  try {
+    res.send(readFileSync(join(__dirname, "landing.html"), "utf8"))
+  } catch(e) {
+    res.json({ ok: true, mensaje: "Servidor Tu Empleado IA corriendo" })
+  }
 })
+
 
 setupAuth(app, supabase)
 
@@ -239,6 +244,7 @@ app.get("/api/auth/me", async (req, res) => {
     res.json({ ok: true, user: data.user, negocio })
   } catch (err) { res.status(500).json({ error: err.message }) }
 })
+
 
 app.get("/login", (req, res) => {
   try {
