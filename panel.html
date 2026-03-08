@@ -449,5 +449,32 @@ function toast(msg,error=false){
   setTimeout(()=>el.classList.remove('show'),3000)
 }
 </script>
+<script>
+// Verificar sesion al cargar
+(function() {
+  const token = localStorage.getItem("token")
+  if (!token) {
+    window.location.href = "/login"
+    return
+  }
+  // Verificar que el token sea valido
+  fetch("/api/auth/me", {
+    headers: { "Authorization": "Bearer " + token }
+  }).then(r => r.json()).then(data => {
+    if (!data.ok) {
+      localStorage.clear()
+      window.location.href = "/login"
+    } else {
+      // Cargar negocio_id automaticamente
+      if (data.negocio) {
+        document.getElementById("negocio-id").value = data.negocio.id
+        localStorage.setItem("negocio_id", data.negocio.id)
+      }
+    }
+  }).catch(() => {
+    window.location.href = "/login"
+  })
+})()
+</script>
 </body>
 </html>
